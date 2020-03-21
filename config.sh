@@ -1,3 +1,6 @@
 POSTGRESQL_TAG=10-alpine
 POSTGRESQL_CONTAINER_NAME=postgres_vault
 POSTGRESQL_DATA_VOLUME=postgresql_vault
+
+ANSIBLE_IMAGE=torinthiel/vault-ansible
+ANSIBLE_TAG=latest

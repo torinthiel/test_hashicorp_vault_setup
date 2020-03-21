@@ -8,4 +8,11 @@ performed via ansible.
 * Start container with ./postgres_start.sh
 * Stop container with ./postgres_stop.sh
 * Remove the container and data volume with ./postgres_clean.sh
-*
+
+Ansible:
+A pretty common centos image with ansible and dependencies installed.
+The ansible folder from this repository is mountend on the image,
+in /home/ansible/playbook.
+* Build the image with ./ansible_build.sh
+* Start with ./ansible_start.sh. Runs bash unless a command is given. Note that
+  the container is auto-removed.
