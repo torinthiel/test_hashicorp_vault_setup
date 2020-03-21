@@ -1,1 +1,11 @@
 Test of setting up vault with postgresql storage backend using ansible
+
+
+Postgresql database for storage:
+Default PostgreSQL container, with data stored on a docker volume. Not
+initialised (except master user password), all initialisation is to be
+performed via ansible.
+* Start container with ./postgres_start.sh
+* Stop container with ./postgres_stop.sh
+* Remove the container and data volume with ./postgres_clean.sh
+*
