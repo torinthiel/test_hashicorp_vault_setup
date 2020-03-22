@@ -16,6 +16,17 @@
       login_password: '{{login_password}}'
       state: present
     delegate_to: 127.0.0.1
+  - name: enforce more strict permission control
+    postgresql_privs:
+      login_host: '{{ansible_host}}'
+      login_password: '{{login_password}}'
+      database: '{{vault_db}}'
+      objs: public
+      privs: CREATE
+      role: PUBLIC
+      state: absent
+      type: schema
+    delegate_to: 127.0.0.1
   - name: create storage table for vault
     postgresql_table:
       name: '{{kv_table}}'
