@@ -1,22 +1,28 @@
 - hosts: postgres
   gather_facts: no
   vars:
-    postgresql_user: vault
+    login_user: postgres
+    login_password: notapass
+    vault_db_user: vault
+    vault_db: vault
+    vault_db_password: vaultdbpass
+    kv_table: vault_kv_store
+    ha_table: vault_ha_locks
   tasks:
   - name: create database for vault
     postgresql_db:
-      name: vault
-      login_host: 172.17.0.5
-      login_password: notapass
+      name: '{{vault_db}}'
+      login_host: '{{ansible_host}}'
+      login_password: '{{login_password}}'
       state: present
     delegate_to: 127.0.0.1
   - name: create storage table for vault
     postgresql_table:
-      name: vault_kv_store
-      login_host: 172.17.0.5
-      login_password: notapass
+      name: '{{kv_table}}'
+      login_host: '{{ansible_host}}'
+      login_password: '{{login_password}}'
       state: present
-      db: vault
+      db: '{{vault_db}}'
       columns:
       - parent_path TEXT COLLATE "C" NOT NULL
       - path        TEXT COLLATE "C"
@@ -27,20 +33,20 @@
   - name: create index on storage table
     postgresql_idx:
       name: parent_path_idx
-      login_host: 172.17.0.5
-      login_password: notapass
+      login_host: '{{ansible_host}}'
+      login_password: '{{login_password}}'
       state: present
-      db: vault
-      table: vault_kv_store
+      db: '{{vault_db}}'
+      table: '{{kv_table}}'
       columns: parent_path
     delegate_to: 127.0.0.1
   - name: create HA table for vault
     postgresql_table:
-      name: vault_ha_locks
-      login_host: 172.17.0.5
-      login_password: notapass
+      name: '{{ha_table}}'
+      login_host: '{{ansible_host}}'
+      login_password: '{{login_password}}'
       state: present
-      db: vault
+      db: '{{vault_db}}'
       columns:
       - ha_key      TEXT COLLATE "C" NOT NULL PRIMARY KEY
       - ha_identity TEXT COLLATE "C" NOT NULL
@@ -49,10 +55,11 @@
     delegate_to: 127.0.0.1
   - name: create user for vault
     postgresql_user:
-      name: vault
-      login_host: 172.17.0.5
-      login_password: notapass
-      password: vaultdbpass
+      name: '{{vault_db_user}}'
+      db: '{{vault_db}}'
+      login_host: '{{ansible_host}}'
+      login_password: '{{login_password}}'
+      password: '{{vault_db_password}}'
       encrypted: yes
       state: present
       priv: CONNECT/{{kv_table}}:ALL/{{ha_table}}:ALL
