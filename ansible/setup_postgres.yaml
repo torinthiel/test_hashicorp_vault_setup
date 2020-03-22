@@ -1,0 +1,59 @@
+- hosts: postgres
+  gather_facts: no
+  vars:
+    postgresql_user: vault
+  tasks:
+  - name: create database for vault
+    postgresql_db:
+      name: vault
+      login_host: 172.17.0.5
+      login_password: notapass
+      state: present
+    delegate_to: 127.0.0.1
+  - name: create storage table for vault
+    postgresql_table:
+      name: vault_kv_store
+      login_host: 172.17.0.5
+      login_password: notapass
+      state: present
+      db: vault
+      columns:
+      - parent_path TEXT COLLATE "C" NOT NULL
+      - path        TEXT COLLATE "C"
+      - key         TEXT COLLATE "C"
+      - value       BYTEA
+      - CONSTRAINT pkey PRIMARY KEY (path, key)
+    delegate_to: 127.0.0.1
+  - name: create index on storage table
+    postgresql_idx:
+      name: parent_path_idx
+      login_host: 172.17.0.5
+      login_password: notapass
+      state: present
+      db: vault
+      table: vault_kv_store
+      columns: parent_path
+    delegate_to: 127.0.0.1
+  - name: create HA table for vault
+    postgresql_table:
+      name: vault_ha_locks
+      login_host: 172.17.0.5
+      login_password: notapass
+      state: present
+      db: vault
+      columns:
+      - ha_key      TEXT COLLATE "C" NOT NULL PRIMARY KEY
+      - ha_identity TEXT COLLATE "C" NOT NULL
+      - ha_value    TEXT COLLATE "C"
+      - valid_until TIMESTAMP WITH TIME ZONE NOT NULL
+    delegate_to: 127.0.0.1
+  - name: create user for vault
+    postgresql_user:
+      name: vault
+      login_host: 172.17.0.5
+      login_password: notapass
+      password: vaultdbpass
+      encrypted: yes
+      state: present
+      priv: CONNECT/{{kv_table}}:ALL/{{ha_table}}:ALL
+    delegate_to: 127.0.0.1
