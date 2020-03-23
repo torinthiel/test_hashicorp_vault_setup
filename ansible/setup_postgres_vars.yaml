@@ -1,0 +1,8 @@
+# As we are dealing with Hashicorp Vault and Ansible Vault this presents
+# a naming conflit. Accoridng to best practices, variables should be
+# previxed with vault_ when adding to Ansible Vault, but because of the 
+# conflict ansible_vault_ prefix will be used here.
+#
+# As this is just an example, the password to Ansuble Vault is 'password'.
+login_password: '{{ansible_vault_login_password}}'
+vault_db_password: '{{ansible_vault_vault_db_password}}'

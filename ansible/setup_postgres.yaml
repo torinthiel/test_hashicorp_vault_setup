@@ -2,12 +2,13 @@
   gather_facts: no
   vars:
     login_user: postgres
-    login_password: notapass
     vault_db_user: vault
     vault_db: vault
-    vault_db_password: vaultdbpass
     kv_table: vault_kv_store
     ha_table: vault_ha_locks
+  vars_files:
+  - setup_postgres_vars.yaml
+  - setup_postgres_vault.yaml
   tasks:
   - name: create database for vault
     postgresql_db:
