@@ -16,3 +16,6 @@ in /home/ansible/playbook.
 * Build the image with ./ansible_build.sh
 * Start with ./ansible_start.sh. Runs bash unless a command is given. Note that
   the container is auto-removed.
+
+Run the playbook ansible/setup_vault.yaml to setup the database and docker
+vault service on the requested machines.

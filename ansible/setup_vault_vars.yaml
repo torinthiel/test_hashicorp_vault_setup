@@ -6,3 +6,7 @@
 # As this is just an example, the password to Ansuble Vault is 'password'.
 login_password: '{{ansible_vault_login_password}}'
 vault_db_password: '{{ansible_vault_vault_db_password}}'
+vault_db_user: vault
+vault_db: vault
+kv_table: vault_kv_store
+ha_table: vault_ha_locks

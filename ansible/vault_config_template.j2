@@ -1,0 +1,11 @@
+storage "postgresql" {
+	connection_url = "postgres://{{vault_db_user}}:{{vault_db_password}}@172.17.0.5:5432/{{vault_db}}?sslmode=disable"
+}
+
+listener "tcp" {
+	address = "0.0.0.0:8200"
+	tls_disable = true
+}
+
+disable_mlock = true
+ui = true

@@ -1,14 +1,11 @@
-- hosts: postgres
+- name: setup postgres database for storage
+  hosts: postgres
   gather_facts: no
   vars:
     login_user: postgres
-    vault_db_user: vault
-    vault_db: vault
-    kv_table: vault_kv_store
-    ha_table: vault_ha_locks
   vars_files:
-  - setup_postgres_vars.yaml
-  - setup_postgres_vault.yaml
+  - setup_vault_vars.yaml
+  - setup_vault_vault.yaml
   tasks:
   - name: create database for vault
     postgresql_db:
@@ -76,3 +73,50 @@
       state: present
       priv: CONNECT/{{kv_table}}:ALL/{{ha_table}}:ALL
     delegate_to: 127.0.0.1
+
+- name: install vault
+  hosts: vault
+  vars:
+    prev_config_name:
+    - vault_config
+    - vault_config_1
+    - vault_config_2
+    config_name: vault_config_3
+  vars_files:
+  - setup_vault_vars.yaml
+  - setup_vault_vault.yaml
+  tasks:
+  - name: start docker swarm
+    docker_swarm:
+      state: present
+      advertise_addr: '{{swarm_addr}}'
+  - name: download vault image
+    docker_image:
+      name: vault:1.3.3
+      source: pull
+      state: present
+  - name: prepare vault configuration
+    docker_secret:
+      name: "{{config_name}}"
+      state: present
+      data: "{{lookup('template', './vault_config_template.j2')}}"
+  - name: start vault service
+    docker_swarm_service:
+      name: vaulttest
+      state: present
+      args:
+      - server
+      image: vault:1.3.3
+      replicas: 1
+      mounts:
+      - type: volume
+        source: vault_test_logs
+        target: /vault/logs
+      secrets:
+      - secret_name: "{{config_name}}"
+        filename: /vault/config/vault.hcl
+  - name: cleanup old vault configuration
+    docker_secret:
+     name: "{{item}}"
+     state: absent
+    loop: "{{prev_config_name}}"
