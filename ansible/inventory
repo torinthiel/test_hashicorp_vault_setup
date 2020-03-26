@@ -1,10 +1,8 @@
-postgres:
-  hosts:
-    vault_postgres:
-      ansible_host: 172.17.0.5
-vault_group:
-  hosts:
-    vault:
-      ansible_host: 172.17.0.1
-      ansible_user: torinthiel
-      swarm_addr: 192.168.11.10
+  ungrouped:
+    hosts:
+      postgres:
+        ansible_host: 172.17.0.5
+      vault:
+        ansible_host: 172.17.0.1
+        ansible_user: torinthiel
+        swarm_addr: 192.168.11.10
