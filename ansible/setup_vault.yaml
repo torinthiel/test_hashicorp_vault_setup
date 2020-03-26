@@ -77,11 +77,15 @@
 - name: install vault
   hosts: vault
   vars:
-    prev_config_name:
+    # Docker refuses to update secrets if those are used
+    # So if the step "prepare vault configuration" fails either:
+    # a) destroy the vault service
+    # b) add here next line, with higher number
+    config_names:
     - vault_config
     - vault_config_1
     - vault_config_2
-    config_name: vault_config_3
+    - vault_config_3
   vars_files:
   - setup_vault_vars.yaml
   - setup_vault_vault.yaml
@@ -97,7 +101,7 @@
       state: present
   - name: prepare vault configuration
     docker_secret:
-      name: "{{config_name}}"
+      name: "{{config_names | last}}"
       state: present
       data: "{{lookup('template', './vault_config_template.j2')}}"
   - name: start vault service
@@ -113,13 +117,16 @@
         source: vault_test_logs
         target: /vault/logs
       secrets:
-      - secret_name: "{{config_name}}"
+      - secret_name: "{{config_names | last}}"
         filename: /vault/config/vault.hcl
   - name: cleanup old vault configuration
     docker_secret:
      name: "{{item}}"
      state: absent
-    loop: "{{prev_config_name}}"
+    loop: "{{config_names}}"
+    loop_control:
+      extended: yes
+    when: not ansible_loop.last
   - name: wait for vault to start
     wait_for:
       host: 172.17.0.6
