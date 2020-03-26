@@ -18,4 +18,5 @@ in /home/ansible/playbook.
   the container is auto-removed.
 
 Run the playbook ansible/setup_vault.yaml to setup the database and docker
-vault service on the requested machines.
+vault service on the requested machines. Use the command
+ansible-playbook -i playbook/inventory playbook/setup_vault.yaml --ask-vault-pass
