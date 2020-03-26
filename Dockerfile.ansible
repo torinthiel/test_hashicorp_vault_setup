@@ -1,7 +1,8 @@
 FROM centos:7
 
 COPY ansible.repo /etc/yum.repos.d/
-RUN yum install -y ansible python-psycopg2 openssh-clients && yum clean all
+RUN yum install -y ansible python-psycopg2 openssh-clients python3-pip && yum clean all
+RUN pip3 install hvac
 RUN useradd -m ansible
 USER ansible
 WORKDIR /home/ansible
