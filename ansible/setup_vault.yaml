@@ -120,3 +120,33 @@
      name: "{{item}}"
      state: absent
     loop: "{{prev_config_name}}"
+  - name: wait for vault to start
+    wait_for:
+      host: 172.17.0.6
+      port: 8200
+      timeout: 120
+
+- name: Initialize vault
+  hosts: localhost-py3
+  tasks:
+  - name: Check vault status
+    hashivault_status:
+      url: http://172.17.0.6:8200/
+    register: vault_status
+  - block:
+    - name: Initialize vault
+      hashivault_init:
+        url: http://172.17.0.6:8200/
+        secret_shares: 1
+        secret_threshold: 1
+      register: vault_init
+    - name: display root token
+      debug:
+        msg: The root token is {{vault_init.root_token}}
+    - name: display unseal keys
+      debug:
+        msg: The unseal key part {{index + 1}} is {{item}}
+      loop: "{{vault_init.keys_base64}}"
+      loop_control:
+        index_var: index
+    when: not vault_status.status.initialized
