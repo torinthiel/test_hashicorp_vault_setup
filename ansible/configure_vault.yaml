@@ -1,0 +1,28 @@
+# Note that this needs VAULT_URL and VAULT_TOKEN environment variables to be set
+- name: Configure vault
+  hosts: localhost-py3
+  tasks:
+  - name: enables secret backend
+    hashivault_secret_engine:
+      backend: kv-v2
+      description: General store for various pieces of data
+      name: secret
+      state: present
+  - name: enable userpass login
+    hashivault_auth_method:
+      method_type: userpass
+      state: enabled
+  - name: enable AppRole login
+    hashivault_auth_method:
+      method_type: approle
+      state: enabled
+  - name: create a test user
+    hashivault_userpass:
+      name: testuser
+      pass: testpass
+      policies: test_policy
+    no_log: true
+  - name: create a test policy
+    hashivault_policy_set:
+      name: test_policy
+      rules: "{{lookup('file', './policies/test_policy')}}"
