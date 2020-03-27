@@ -24,5 +24,7 @@
     no_log: true
   - name: create a test policy
     hashivault_policy_set:
-      name: test_policy
-      rules: "{{lookup('file', './policies/test_policy')}}"
+      name: "{{item | basename}}"
+      rules: "{{lookup('file', item)}}"
+    with_fileglob:
+    - "policies/*"
