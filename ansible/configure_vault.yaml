@@ -1,6 +1,7 @@
 # Note that this needs VAULT_URL and VAULT_TOKEN environment variables to be set
 - name: Configure vault
   hosts: localhost-py3
+  gather_facts: no
   tasks:
   - name: enables secret backend
     hashivault_secret_engine:
