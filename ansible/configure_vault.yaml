@@ -22,7 +22,7 @@
       pass: testpass
       policies: test_policy
     no_log: true
-  - name: create a test policy
+  - name: create policies
     hashivault_policy_set:
       name: "{{item | basename}}"
       rules: "{{lookup('file', item)}}"
