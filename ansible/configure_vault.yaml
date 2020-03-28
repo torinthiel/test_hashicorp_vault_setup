@@ -4,10 +4,12 @@
   tasks:
   - name: enables secret backend
     hashivault_secret_engine:
-      backend: kv-v2
+      backend: kv
       description: General store for various pieces of data
       name: secret
       state: present
+      options:
+        version: 2
   - name: enable userpass login
     hashivault_auth_method:
       method_type: userpass
