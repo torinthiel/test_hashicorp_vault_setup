@@ -1,0 +1,3 @@
+[submodule "ansible/ansible-modules-hashivault"]
+	path = ansible/ansible-modules-hashivault
+	url = https://github.com/TerryHowe/ansible-modules-hashivault.git
