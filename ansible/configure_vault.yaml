@@ -2,6 +2,11 @@
 - name: Configure vault
   hosts: localhost-py3
   gather_facts: no
+  vars:
+    policies: 'policies/*'
+    default_policies:
+    - root
+    - default
   tasks:
   - name: enables secret backend
     hashivault_secret_engine:
@@ -30,4 +35,13 @@
       name: "{{item | basename}}"
       rules: "{{lookup('file', item)}}"
     with_fileglob:
-    - "policies/*"
+    - '{{policies}}'
+  - name: list existing policies
+    hashivault_policy_list:
+    register: 'policy_list'
+  - name: delete outstanding policies
+    hashivault_policy:
+      name: '{{item}}'
+      state: absent
+    with_list: '{{policy_list.policies}}'
+    when: not item in default_policies and not item in lookup('fileglob', policies)
