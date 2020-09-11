@@ -1,4 +1,4 @@
-# Note that this needs VAULT_URL and VAULT_TOKEN environment variables to be set
+# Note that this needs VAULT_ADDR and VAULT_TOKEN environment variables to be set
 - name: Configure vault
   hosts: localhost-py3
   gather_facts: no
