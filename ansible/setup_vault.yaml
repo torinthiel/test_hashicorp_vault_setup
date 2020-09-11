@@ -135,6 +135,7 @@
 
 - name: Initialize vault
   hosts: localhost-py3
+  gather_facts: no
   tasks:
   - name: Check vault status
     hashivault_status:
