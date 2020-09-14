@@ -9,17 +9,18 @@ performed via ansible.
 * Stop container with ./postgres_stop.sh
 * Remove the container and data volume with ./postgres_clean.sh
 
-Ansible:
-A pretty common centos image with ansible and dependencies installed.
-The ansible folder from this repository is mountend on the image,
-in /home/ansible/playbook.
-* Build the image with ./ansible_build.sh
-* Start with ./ansible_start.sh. Runs bash unless a command is given. Note that
-  the container is auto-removed.
+Ansible is set-up via virtualenv, and requires python 3 (at least 3.6) and
+virtualenv installed. The specific version of virtualenv is not required, as
+initial one is used only to install the required version.
+
+Setup the environment once with ./virtualenv_setup.sh. After that activate the
+virtual environment by running `source venv/bin/activate`, or `.
+venv/bin/activate` - note the leading dot. The second step needs to be done
+once per session. After that all ansible commands are available.
 
 Run the playbook ansible/setup_vault.yaml to setup the database and docker
 vault service on the requested machines. Use the command
-ansible-playbook -i playbook/inventory playbook/setup_vault.yaml --ask-vault-pass
+ansible-playbook -i ansible/inventory playbook/setup_vault.yaml --ask-vault-pass
 
 After Vault is initialized and unsealed you can run the playbook
 ansible/configure_vault.yaml to apply required vault configuration.
