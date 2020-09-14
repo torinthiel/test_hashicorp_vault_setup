@@ -28,3 +28,6 @@ ansible/configure_vault.yaml to apply required vault configuration.
 Note that this is only a Proof-of-Concept, that largely depends on hardcoded IP
 addresses, so the docker networks you have devined as well as order of starting
 containers really matters.
+
+
+The password for ansible vault, as this is a PoC, is 'password'.
